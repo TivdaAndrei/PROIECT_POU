@@ -1,0 +1,12 @@
+{
+  "package_name": "turtlebot3_msgs",
+  "non_idl_tuples": [
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:msg/SensorState.msg",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:msg/Sound.msg",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:msg/VersionInfo.msg",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:srv/Sound.srv",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:srv/Dqn.srv",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:srv/Goal.srv",
+    "/home/andrei-robert/ROS2_ws/src/turtlebot3_msgs:action/Patrol.action"
+  ]
+}
