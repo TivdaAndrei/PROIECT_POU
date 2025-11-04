@@ -1,0 +1,143 @@
+╔══════════════════════════════════════════════════════════════════╗
+║           VIRTUAL PET - QUICK REFERENCE CARD 🐾                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📍 PROJECT LOCATION
+   /home/andrei-robert/ROS2_ws/src/virtual_pet/
+
+🚀 QUICK START
+   ./start_virtual_pet.sh
+
+📋 MANUAL COMMANDS
+   
+   Setup:
+   $ source ~/ROS2_ws/install/setup.bash
+   $ export TURTLEBOT3_MODEL=burger
+   
+   Launch Full System:
+   $ ros2 launch virtual_pet virtual_pet.launch.py
+   
+   Launch Nodes Only (Gazebo separate):
+   $ ros2 launch virtual_pet pet_nodes_only.launch.py
+   
+   Test Camera:
+   $ /home/andrei-robert/ROS2_ws/.venv/bin/python src/virtual_pet/test_camera.py
+
+✋ GESTURE CONTROLS
+
+   ✌️  PEACE (2 fingers)    → Spawn "PACE!" text + spin celebration
+   ✊  FIST (closed hand)   → Draw SQUARE
+   ✋  OPEN (5 fingers)     → Draw CIRCLE  
+   👆  ONE (1 finger)       → Draw LINE
+   🤘  ROCK (thumb+pinky)   → Draw TRIANGLE
+   🤙  THREE (3 fingers)    → Draw STAR
+
+📦 PACKAGE STRUCTURE
+
+   virtual_pet/
+   ├── virtual_pet/              # Python modules
+   │   ├── gesture_recognizer.py # Hand tracking & gesture detection
+   │   ├── shape_drawer.py       # Robot movement & shape drawing
+   │   └── pet_controller.py     # System coordinator
+   ├── launch/                   # ROS2 launch files
+   │   ├── virtual_pet.launch.py
+   │   └── pet_nodes_only.launch.py
+   ├── requirements.txt          # Python dependencies
+   ├── test_camera.py           # Camera test utility
+   └── README.md                # Full documentation
+
+🔧 ROS2 TOPICS
+
+   /pet/gesture     (std_msgs/String)      Detected gestures
+   /pet/status      (std_msgs/String)      System status
+   /cmd_vel         (geometry_msgs/Twist)  Robot velocity commands
+
+📊 ROS2 NODES
+
+   gesture_recognizer   Hand gesture detection
+   shape_drawer         Shape drawing logic
+   pet_controller       System monitoring
+
+🐛 TROUBLESHOOTING
+
+   Camera Issues:
+   • Run test: ./src/virtual_pet/test_camera.py
+   • Check devices: ls /dev/video*
+   • Try different index in gesture_recognizer.py
+   
+   Gazebo Issues:
+   • Check model: echo $TURTLEBOT3_MODEL
+   • Unpause: Press spacebar in Gazebo
+   • Restart: killall gzserver gzclient
+   
+   Build Issues:
+   • Clean build: colcon build --packages-select virtual_pet --cmake-clean-cache
+   • Check dependencies: rosdep install --from-paths src --ignore-src -r -y
+   
+   Gesture Recognition:
+   • Ensure good lighting
+   • Position hand clearly in frame
+   • Check OpenCV window for feedback
+   • Wait for cooldown between gestures (1.5 seconds)
+
+🎯 USEFUL COMMANDS
+
+   List topics:
+   $ ros2 topic list
+   
+   Echo gesture topic:
+   $ ros2 topic echo /pet/gesture
+   
+   List nodes:
+   $ ros2 node list
+   
+   Check node info:
+   $ ros2 node info /shape_drawer
+   
+   Rebuild package:
+   $ colcon build --packages-select virtual_pet --symlink-install
+
+📚 DOCUMENTATION
+
+   Detailed README:    src/virtual_pet/README.md
+   Setup Complete:     SETUP_COMPLETE.md
+   Architecture:       src/virtual_pet/ARCHITECTURE.py
+   Main README:        README.md
+
+🎮 TIPS FOR BEST EXPERIENCE
+
+   1. Position yourself 0.5-1.5m from camera
+   2. Ensure bright, even lighting
+   3. Make clear, distinct gestures
+   4. Keep hand centered in frame
+   5. Allow cooldown between gestures
+   6. Watch Gazebo window for robot actions
+   7. Use Gazebo controls to adjust view
+
+⚙️ CUSTOMIZATION
+
+   Drawing Speed (shape_drawer.py):
+   self.linear_speed = 0.2    # m/s - increase for faster
+   self.angular_speed = 0.5   # rad/s - increase for sharper turns
+   
+   Shape Size (shape_drawer.py):
+   self.side_length = 1.0     # meters - increase for larger shapes
+   
+   Gesture Cooldown (gesture_recognizer.py):
+   self.gesture_cooldown = 15 # frames - decrease for faster response
+
+🌟 FEATURE IDEAS
+
+   • Add voice feedback with text-to-speech
+   • Create trail markers showing drawn paths
+   • Add gesture for speed control
+   • Implement complex pattern sequences
+   • Add multi-robot coordination
+   • Create "undo" gesture
+   • Add custom shape designer
+
+═══════════════════════════════════════════════════════════════════
+
+         Built with ❤️ using ROS2, Gazebo, OpenCV & MediaPipe
+         
+═══════════════════════════════════════════════════════════════════

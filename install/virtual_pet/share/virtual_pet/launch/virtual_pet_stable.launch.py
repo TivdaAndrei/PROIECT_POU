@@ -1,0 +1,1 @@
+/home/andrei-robert/ROS2_ws/build/virtual_pet/launch/virtual_pet_stable.launch.py

@@ -1,0 +1,1 @@
+/home/andrei-robert/ROS2_ws/src/virtual_pet/launch/pet_nodes_simple.launch.py
