@@ -7,10 +7,12 @@ Subscribes to /pet/gesture and publishes velocity commands
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist, TwistStamped
+from geometry_msgs.msg import Twist, TwistStamped, Pose
 from gazebo_msgs.srv import SpawnEntity
+from nav_msgs.msg import Odometry
 import math
 import time
+import random
 
 
 class ShapeDrawer(Node):
@@ -28,7 +30,15 @@ class ShapeDrawer(Node):
         # Publisher for robot velocity (TwistStamped for Gazebo bridge)
         self.cmd_vel_pub = self.create_publisher(TwistStamped, '/cmd_vel', 10)
         
-        # Service client for spawning text in Gazebo
+        # Subscriber for robot position
+        self.odom_sub = self.create_subscription(
+            Odometry,
+            '/odom',
+            self.odom_callback,
+            10
+        )
+        
+        # Service client for spawning entities in Gazebo
         self.spawn_entity_client = self.create_client(SpawnEntity, '/spawn_entity')
         
         # State variables
@@ -44,13 +54,51 @@ class ShapeDrawer(Node):
         
         self.peace_count = 0  # Counter for PACE! text instances
         
+        # Trail tracking
+        self.last_position = None
+        self.current_position = None
+        self.trail_counter = 0
+        self.trail_distance_threshold = 0.05  # Spawn trail marker every 5cm
+        
+        # Color mapping for gestures
+        self.gesture_colors = {
+            'peace': (1.0, 0.0, 1.0, 1.0),      # Magenta
+            'fist': (1.0, 0.0, 0.0, 1.0),       # Red
+            'open_hand': (0.0, 1.0, 0.0, 1.0),  # Green
+            'one_finger': (0.0, 0.0, 1.0, 1.0), # Blue
+            'rock': (1.0, 0.5, 0.0, 1.0),       # Orange
+            'three_fingers': (1.0, 1.0, 0.0, 1.0), # Yellow
+        }
+        self.current_color = (1.0, 1.0, 1.0, 1.0)  # Default white
+        
         self.get_logger().info('Shape Drawer Node Started!')
         self.get_logger().info('Ready to draw shapes with the virtual pet!')
+
+    def odom_callback(self, msg):
+        """Track robot position for trail drawing"""
+        self.current_position = msg.pose.pose.position
+        
+        # If drawing, spawn trail markers
+        if self.is_drawing and self.last_position is not None:
+            distance = math.sqrt(
+                (self.current_position.x - self.last_position.x)**2 +
+                (self.current_position.y - self.last_position.y)**2
+            )
+            
+            if distance >= self.trail_distance_threshold:
+                self.spawn_trail_marker()
+                self.last_position = self.current_position
+        elif self.is_drawing and self.last_position is None:
+            self.last_position = self.current_position
 
     def gesture_callback(self, msg):
         """Handle incoming gesture messages"""
         gesture = msg.data
         self.get_logger().info(f'Received gesture: {gesture}')
+        
+        # Update color based on gesture
+        if gesture in self.gesture_colors:
+            self.current_color = self.gesture_colors[gesture]
         
         # Don't start new shape if already drawing
         if self.is_drawing:
@@ -135,6 +183,48 @@ class ShapeDrawer(Node):
             self.get_logger().info('✌️ Spawning PACE! text in Gazebo')
         else:
             self.get_logger().warn('Gazebo spawn service not available')
+
+    def spawn_trail_marker(self):
+        """Spawn a colorful trail marker at current position"""
+        if self.current_position is None:
+            return
+        
+        self.trail_counter += 1
+        r, g, b, a = self.current_color
+        
+        # SDF model for a small colored sphere
+        sdf_model = f"""<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='trail_{self.trail_counter}'>
+    <static>true</static>
+    <link name='link'>
+      <visual name='visual'>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>{r} {g} {b} {a}</ambient>
+          <diffuse>{r} {g} {b} {a}</diffuse>
+          <emissive>{r*0.3} {g*0.3} {b*0.3} 1</emissive>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>"""
+        
+        request = SpawnEntity.Request()
+        request.name = f'trail_{self.trail_counter}'
+        request.xml = sdf_model
+        request.robot_namespace = ''
+        request.initial_pose.position.x = float(self.current_position.x)
+        request.initial_pose.position.y = float(self.current_position.y)
+        request.initial_pose.position.z = 0.01
+        
+        # Call service asynchronously
+        if self.spawn_entity_client.service_is_ready():
+            future = self.spawn_entity_client.call_async(request)
 
     def draw_square(self):
         """Draw a square"""
