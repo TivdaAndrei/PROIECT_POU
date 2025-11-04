@@ -7,7 +7,7 @@ Subscribes to /pet/gesture and publishes velocity commands
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TwistStamped
 from gazebo_msgs.srv import SpawnEntity
 import math
 import time
@@ -25,8 +25,8 @@ class ShapeDrawer(Node):
             10
         )
         
-        # Publisher for robot velocity
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Publisher for robot velocity (TwistStamped for Gazebo bridge)
+        self.cmd_vel_pub = self.create_publisher(TwistStamped, '/cmd_vel', 10)
         
         # Service client for spawning text in Gazebo
         self.spawn_entity_client = self.create_client(SpawnEntity, '/spawn_entity')
@@ -85,9 +85,11 @@ class ShapeDrawer(Node):
     def celebrate_step(self):
         """Execute celebration spin"""
         if self.shape_step < 40:  # Spin for 2 seconds
-            twist = Twist()
-            twist.angular.z = 2.0  # Fast spin!
-            self.cmd_vel_pub.publish(twist)
+            twist_stamped = TwistStamped()
+            twist_stamped.header.stamp = self.get_clock().now().to_msg()
+            twist_stamped.header.frame_id = 'base_footprint'
+            twist_stamped.twist.angular.z = 2.0  # Fast spin!
+            self.cmd_vel_pub.publish(twist_stamped)
             self.shape_step += 1
         else:
             self.stop_robot()
@@ -154,13 +156,15 @@ class ShapeDrawer(Node):
             self.get_logger().info('Square complete!')
             return
         
-        twist = Twist()
+        twist_stamped = TwistStamped()
+        twist_stamped.header.stamp = self.get_clock().now().to_msg()
+        twist_stamped.header.frame_id = 'base_footprint'
         if progress < 80:  # Move forward
-            twist.linear.x = self.linear_speed
+            twist_stamped.twist.linear.x = self.linear_speed
         elif progress < 100:  # Turn 90 degrees
-            twist.angular.z = self.angular_speed * 2.0
+            twist_stamped.twist.angular.z = self.angular_speed * 2.0
         
-        self.cmd_vel_pub.publish(twist)
+        self.cmd_vel_pub.publish(twist_stamped)
         self.shape_step += 1
 
     def draw_circle(self):
@@ -174,10 +178,12 @@ class ShapeDrawer(Node):
     def circle_step(self):
         """Execute one step of circle drawing"""
         if self.shape_step < 200:  # Complete circle
-            twist = Twist()
-            twist.linear.x = self.linear_speed
-            twist.angular.z = self.angular_speed
-            self.cmd_vel_pub.publish(twist)
+            twist_stamped = TwistStamped()
+            twist_stamped.header.stamp = self.get_clock().now().to_msg()
+            twist_stamped.header.frame_id = 'base_footprint'
+            twist_stamped.twist.linear.x = self.linear_speed
+            twist_stamped.twist.angular.z = self.angular_speed
+            self.cmd_vel_pub.publish(twist_stamped)
             self.shape_step += 1
         else:
             self.stop_robot()
@@ -196,9 +202,11 @@ class ShapeDrawer(Node):
     def line_step(self):
         """Execute one step of line drawing"""
         if self.shape_step < 100:
-            twist = Twist()
-            twist.linear.x = self.linear_speed
-            self.cmd_vel_pub.publish(twist)
+            twist_stamped = TwistStamped()
+            twist_stamped.header.stamp = self.get_clock().now().to_msg()
+            twist_stamped.header.frame_id = 'base_footprint'
+            twist_stamped.twist.linear.x = self.linear_speed
+            self.cmd_vel_pub.publish(twist_stamped)
             self.shape_step += 1
         else:
             self.stop_robot()
@@ -226,13 +234,15 @@ class ShapeDrawer(Node):
             self.get_logger().info('Triangle complete!')
             return
         
-        twist = Twist()
+        twist_stamped = TwistStamped()
+        twist_stamped.header.stamp = self.get_clock().now().to_msg()
+        twist_stamped.header.frame_id = 'base_footprint'
         if progress < 80:  # Move forward
-            twist.linear.x = self.linear_speed
+            twist_stamped.twist.linear.x = self.linear_speed
         elif progress < 100:  # Turn 120 degrees
-            twist.angular.z = self.angular_speed * 2.5
+            twist_stamped.twist.angular.z = self.angular_speed * 2.5
         
-        self.cmd_vel_pub.publish(twist)
+        self.cmd_vel_pub.publish(twist_stamped)
         self.shape_step += 1
 
     def draw_star(self):
@@ -255,21 +265,25 @@ class ShapeDrawer(Node):
             self.get_logger().info('Star complete!')
             return
         
-        twist = Twist()
+        twist_stamped = TwistStamped()
+        twist_stamped.header.stamp = self.get_clock().now().to_msg()
+        twist_stamped.header.frame_id = 'base_footprint'
         if progress < 70:  # Move forward
-            twist.linear.x = self.linear_speed
+            twist_stamped.twist.linear.x = self.linear_speed
         elif progress < 100:  # Turn 144 degrees (exterior angle of star)
-            twist.angular.z = self.angular_speed * 3.0
+            twist_stamped.twist.angular.z = self.angular_speed * 3.0
         
-        self.cmd_vel_pub.publish(twist)
+        self.cmd_vel_pub.publish(twist_stamped)
         self.shape_step += 1
 
     def stop_robot(self):
         """Stop the robot"""
-        twist = Twist()
-        twist.linear.x = 0.0
-        twist.angular.z = 0.0
-        self.cmd_vel_pub.publish(twist)
+        twist_stamped = TwistStamped()
+        twist_stamped.header.stamp = self.get_clock().now().to_msg()
+        twist_stamped.header.frame_id = 'base_footprint'
+        twist_stamped.twist.linear.x = 0.0
+        twist_stamped.twist.angular.z = 0.0
+        self.cmd_vel_pub.publish(twist_stamped)
 
 
 def main(args=None):
