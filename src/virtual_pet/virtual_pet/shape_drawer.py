@@ -309,12 +309,18 @@ class ShapeDrawer(Node):
         self.is_drawing = True
         self.current_shape = "square"
         self.shape_step = 0
-        self.timer = self.create_timer(0.05, self.square_step)
+        self.side_time = self.side_length / self.linear_speed  # Time to travel one side
+        self.turn_time = (math.pi / 2) / self.angular_speed  # Time to turn 90 degrees
+        self.timer = self.create_timer(0.1, self.square_step)
 
     def square_step(self):
         """Execute one step of square drawing"""
-        side = self.shape_step // 100  # 4 sides
-        progress = self.shape_step % 100
+        # Each side: move + turn
+        steps_per_side = int((self.side_time + self.turn_time) / 0.1)
+        turn_start = int(self.side_time / 0.1)
+        
+        side = self.shape_step // steps_per_side
+        progress = self.shape_step % steps_per_side
         
         if side >= 4:
             self.stop_robot()
@@ -326,10 +332,11 @@ class ShapeDrawer(Node):
         twist_stamped = TwistStamped()
         twist_stamped.header.stamp = self.get_clock().now().to_msg()
         twist_stamped.header.frame_id = 'base_footprint'
-        if progress < 80:  # Move forward
+        
+        if progress < turn_start:  # Moving forward
             twist_stamped.twist.linear.x = self.linear_speed
-        elif progress < 100:  # Turn 90 degrees
-            twist_stamped.twist.angular.z = self.angular_speed * 2.0
+        else:  # Turning
+            twist_stamped.twist.angular.z = self.angular_speed
         
         self.cmd_vel_pub.publish(twist_stamped)
         self.shape_step += 1
@@ -340,16 +347,23 @@ class ShapeDrawer(Node):
         self.is_drawing = True
         self.current_shape = "circle"
         self.shape_step = 0
-        self.timer = self.create_timer(0.05, self.circle_step)
+        # For a circle: v = r*w, so angular velocity = linear / radius
+        # We want radius ~0.5m
+        self.circle_radius = 0.5
+        self.circle_angular = self.linear_speed / self.circle_radius
+        self.circle_time = (2 * math.pi) / self.circle_angular  # Time for full circle
+        self.timer = self.create_timer(0.1, self.circle_step)
 
     def circle_step(self):
         """Execute one step of circle drawing"""
-        if self.shape_step < 200:  # Complete circle
+        max_steps = int(self.circle_time / 0.1)
+        
+        if self.shape_step < max_steps:
             twist_stamped = TwistStamped()
             twist_stamped.header.stamp = self.get_clock().now().to_msg()
             twist_stamped.header.frame_id = 'base_footprint'
             twist_stamped.twist.linear.x = self.linear_speed
-            twist_stamped.twist.angular.z = self.angular_speed
+            twist_stamped.twist.angular.z = self.circle_angular
             self.cmd_vel_pub.publish(twist_stamped)
             self.shape_step += 1
         else:
@@ -382,17 +396,23 @@ class ShapeDrawer(Node):
             self.get_logger().info('Line complete!')
 
     def draw_triangle(self):
-        """Draw a triangle"""
+        """Draw an equilateral triangle"""
         self.get_logger().info('Drawing TRIANGLE 🔺')
         self.is_drawing = True
         self.current_shape = "triangle"
         self.shape_step = 0
-        self.timer = self.create_timer(0.05, self.triangle_step)
+        self.side_time = self.side_length / self.linear_speed
+        # For equilateral triangle, each exterior angle is 120 degrees = 2.094 radians
+        self.turn_time = (2 * math.pi / 3) / self.angular_speed
+        self.timer = self.create_timer(0.1, self.triangle_step)
 
     def triangle_step(self):
         """Execute one step of triangle drawing"""
-        side = self.shape_step // 100  # 3 sides
-        progress = self.shape_step % 100
+        steps_per_side = int((self.side_time + self.turn_time) / 0.1)
+        turn_start = int(self.side_time / 0.1)
+        
+        side = self.shape_step // steps_per_side
+        progress = self.shape_step % steps_per_side
         
         if side >= 3:
             self.stop_robot()
@@ -404,10 +424,11 @@ class ShapeDrawer(Node):
         twist_stamped = TwistStamped()
         twist_stamped.header.stamp = self.get_clock().now().to_msg()
         twist_stamped.header.frame_id = 'base_footprint'
-        if progress < 80:  # Move forward
+        
+        if progress < turn_start:  # Moving forward
             twist_stamped.twist.linear.x = self.linear_speed
-        elif progress < 100:  # Turn 120 degrees
-            twist_stamped.twist.angular.z = self.angular_speed * 2.5
+        else:  # Turning 120 degrees
+            twist_stamped.twist.angular.z = self.angular_speed
         
         self.cmd_vel_pub.publish(twist_stamped)
         self.shape_step += 1
@@ -418,12 +439,18 @@ class ShapeDrawer(Node):
         self.is_drawing = True
         self.current_shape = "star"
         self.shape_step = 0
-        self.timer = self.create_timer(0.05, self.star_step)
+        self.side_time = self.side_length / self.linear_speed
+        # For a 5-pointed star, turn 144 degrees (720/5) = 2.513 radians
+        self.turn_time = (2 * math.pi * 2 / 5) / self.angular_speed
+        self.timer = self.create_timer(0.1, self.star_step)
 
     def star_step(self):
         """Execute one step of star drawing"""
-        point = self.shape_step // 100  # 5 points
-        progress = self.shape_step % 100
+        steps_per_point = int((self.side_time + self.turn_time) / 0.1)
+        turn_start = int(self.side_time / 0.1)
+        
+        point = self.shape_step // steps_per_point
+        progress = self.shape_step % steps_per_point
         
         if point >= 5:
             self.stop_robot()
@@ -435,12 +462,14 @@ class ShapeDrawer(Node):
         twist_stamped = TwistStamped()
         twist_stamped.header.stamp = self.get_clock().now().to_msg()
         twist_stamped.header.frame_id = 'base_footprint'
-        if progress < 70:  # Move forward
+        
+        if progress < turn_start:  # Moving forward
             twist_stamped.twist.linear.x = self.linear_speed
-        elif progress < 100:  # Turn 144 degrees (exterior angle of star)
-            twist_stamped.twist.angular.z = self.angular_speed * 3.0
+        else:  # Turning 144 degrees
+            twist_stamped.twist.angular.z = self.angular_speed
         
         self.cmd_vel_pub.publish(twist_stamped)
+        self.shape_step += 1
         self.shape_step += 1
 
     def stop_robot(self):

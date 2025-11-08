@@ -1,0 +1,31 @@
+[0.569s] Invoking command in '/home/andrei-robert/ROS2_ws/src/virtual_pet': PYTHONPATH=/home/andrei-robert/ROS2_ws/build/virtual_pet/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/virtual_pet build --build-base /home/andrei-robert/ROS2_ws/build/virtual_pet/build install --record /home/andrei-robert/ROS2_ws/build/virtual_pet/install.log --single-version-externally-managed install_data
+[0.741s] running egg_info
+[0.753s] writing ../../build/virtual_pet/virtual_pet.egg-info/PKG-INFO
+[0.753s] writing dependency_links to ../../build/virtual_pet/virtual_pet.egg-info/dependency_links.txt
+[0.754s] writing entry points to ../../build/virtual_pet/virtual_pet.egg-info/entry_points.txt
+[0.754s] writing requirements to ../../build/virtual_pet/virtual_pet.egg-info/requires.txt
+[0.754s] writing top-level names to ../../build/virtual_pet/virtual_pet.egg-info/top_level.txt
+[0.778s] reading manifest file '../../build/virtual_pet/virtual_pet.egg-info/SOURCES.txt'
+[0.778s] writing manifest file '../../build/virtual_pet/virtual_pet.egg-info/SOURCES.txt'
+[0.778s] running build
+[0.778s] running build_py
+[0.778s] copying virtual_pet/shape_drawer.py -> /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet
+[0.778s] copying virtual_pet/voice_chat.py -> /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet
+[0.778s] running install
+[0.783s] running install_lib
+[0.796s] copying /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet/shape_drawer.py -> /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet
+[0.796s] copying /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet/voice_chat.py -> /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet
+[0.796s] byte-compiling /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet/shape_drawer.py to shape_drawer.cpython-312.pyc
+[0.798s] byte-compiling /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet/voice_chat.py to voice_chat.cpython-312.pyc
+[0.800s] running install_data
+[0.800s] running install_egg_info
+[0.814s] removing '/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet-0.1.0-py3.12.egg-info' (and everything under it)
+[0.814s] Copying ../../build/virtual_pet/virtual_pet.egg-info to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet-0.1.0-py3.12.egg-info
+[0.814s] running install_scripts
+[0.898s] Installing gesture_recognizer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[0.898s] Installing gui_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[0.898s] Installing pet_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[0.899s] Installing shape_drawer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[0.899s] Installing voice_chat script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[0.899s] writing list of installed files to '/home/andrei-robert/ROS2_ws/build/virtual_pet/install.log'
+[0.926s] Invoked command in '/home/andrei-robert/ROS2_ws/src/virtual_pet' returned '0': PYTHONPATH=/home/andrei-robert/ROS2_ws/build/virtual_pet/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/virtual_pet build --build-base /home/andrei-robert/ROS2_ws/build/virtual_pet/build install --record /home/andrei-robert/ROS2_ws/build/virtual_pet/install.log --single-version-externally-managed install_data

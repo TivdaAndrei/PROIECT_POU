@@ -1,0 +1,29 @@
+running egg_info
+writing ../../build/virtual_pet/virtual_pet.egg-info/PKG-INFO
+writing dependency_links to ../../build/virtual_pet/virtual_pet.egg-info/dependency_links.txt
+writing entry points to ../../build/virtual_pet/virtual_pet.egg-info/entry_points.txt
+writing requirements to ../../build/virtual_pet/virtual_pet.egg-info/requires.txt
+writing top-level names to ../../build/virtual_pet/virtual_pet.egg-info/top_level.txt
+reading manifest file '../../build/virtual_pet/virtual_pet.egg-info/SOURCES.txt'
+writing manifest file '../../build/virtual_pet/virtual_pet.egg-info/SOURCES.txt'
+running build
+running build_py
+copying virtual_pet/shape_drawer.py -> /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet
+copying virtual_pet/voice_chat.py -> /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet
+running install
+running install_lib
+copying /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet/shape_drawer.py -> /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet
+copying /home/andrei-robert/ROS2_ws/build/virtual_pet/build/lib/virtual_pet/voice_chat.py -> /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet
+byte-compiling /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet/shape_drawer.py to shape_drawer.cpython-312.pyc
+byte-compiling /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet/voice_chat.py to voice_chat.cpython-312.pyc
+running install_data
+running install_egg_info
+removing '/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet-0.1.0-py3.12.egg-info' (and everything under it)
+Copying ../../build/virtual_pet/virtual_pet.egg-info to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual_pet-0.1.0-py3.12.egg-info
+running install_scripts
+Installing gesture_recognizer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+Installing gui_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+Installing pet_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+Installing shape_drawer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+Installing voice_chat script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+writing list of installed files to '/home/andrei-robert/ROS2_ws/build/virtual_pet/install.log'
