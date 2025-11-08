@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: virtual-pet
+Version: 0.1.0
+Summary: Virtual pet that draws shapes based on hand gestures
+Maintainer: Andrei Robert
+Maintainer-email: andrei@example.com
+License: Apache-2.0

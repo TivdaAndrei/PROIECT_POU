@@ -68,6 +68,16 @@ def generate_launch_description():
             parameters=[{'use_sim_time': use_sim_time}]
         ),
         
+        # Voice Chat Node
+        Node(
+            package='virtual_pet',
+            executable='voice_chat',
+            name='voice_chat',
+            output='screen',
+            emulate_tty=True,
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+        
         # RViz for trail visualization
         Node(
             package='rviz2',

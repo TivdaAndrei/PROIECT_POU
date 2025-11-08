@@ -28,6 +28,7 @@ setup(
             'shape_drawer = virtual_pet.shape_drawer:main',
             'pet_controller = virtual_pet.pet_controller:main',
             'gui_controller = virtual_pet.gui_controller:main',
+            'voice_chat = virtual_pet.voice_chat:main',
         ],
     },
 )
