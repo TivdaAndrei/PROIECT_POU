@@ -1,4 +1,5 @@
 [console_scripts]
 gesture_recognizer = virtual_pet.gesture_recognizer:main
+gui_controller = virtual_pet.gui_controller:main
 pet_controller = virtual_pet.pet_controller:main
 shape_drawer = virtual_pet.shape_drawer:main

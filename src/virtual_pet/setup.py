@@ -13,6 +13,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +27,7 @@ setup(
             'gesture_recognizer = virtual_pet.gesture_recognizer:main',
             'shape_drawer = virtual_pet.shape_drawer:main',
             'pet_controller = virtual_pet.pet_controller:main',
+            'gui_controller = virtual_pet.gui_controller:main',
         ],
     },
 )

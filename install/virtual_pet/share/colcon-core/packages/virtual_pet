@@ -1,1 +1,1 @@
-cv_bridge:gazebo_msgs:geometry_msgs:nav_msgs:rclpy:sensor_msgs:std_msgs
+cv_bridge:gazebo_msgs:geometry_msgs:nav_msgs:rclpy:sensor_msgs:std_msgs:visualization_msgs

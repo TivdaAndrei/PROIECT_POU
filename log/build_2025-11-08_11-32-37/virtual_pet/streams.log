@@ -1,0 +1,21 @@
+[0.661s] Invoking command in '/home/andrei-robert/ROS2_ws/build/virtual_pet': PYTHONPATH=/home/andrei-robert/ROS2_ws/build/virtual_pet/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/andrei-robert/ROS2_ws/build/virtual_pet/build --no-deps symlink_data
+[0.880s] running develop
+[1.013s] running egg_info
+[1.026s] writing virtual_pet.egg-info/PKG-INFO
+[1.026s] writing dependency_links to virtual_pet.egg-info/dependency_links.txt
+[1.026s] writing entry points to virtual_pet.egg-info/entry_points.txt
+[1.026s] writing requirements to virtual_pet.egg-info/requires.txt
+[1.026s] writing top-level names to virtual_pet.egg-info/top_level.txt
+[1.051s] reading manifest file 'virtual_pet.egg-info/SOURCES.txt'
+[1.051s] writing manifest file 'virtual_pet.egg-info/SOURCES.txt'
+[1.065s] running build_ext
+[1.065s] Creating /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages/virtual-pet.egg-link (link to .)
+[1.066s] Installing gesture_recognizer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[1.066s] Installing gui_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[1.066s] Installing pet_controller script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[1.066s] Installing shape_drawer script to /home/andrei-robert/ROS2_ws/install/virtual_pet/lib/virtual_pet
+[1.066s] 
+[1.066s] Installed /home/andrei-robert/ROS2_ws/build/virtual_pet
+[1.066s] running symlink_data
+[1.067s] symbolically linking /home/andrei-robert/ROS2_ws/build/virtual_pet/launch/pet_with_gui.launch.py -> /home/andrei-robert/ROS2_ws/install/virtual_pet/share/virtual_pet/launch
+[1.094s] Invoked command in '/home/andrei-robert/ROS2_ws/build/virtual_pet' returned '0': PYTHONPATH=/home/andrei-robert/ROS2_ws/build/virtual_pet/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/andrei-robert/ROS2_ws/install/virtual_pet/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/andrei-robert/ROS2_ws/build/virtual_pet/build --no-deps symlink_data

@@ -6,13 +6,14 @@ Subscribes to /pet/gesture and publishes velocity commands
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
-from geometry_msgs.msg import Twist, TwistStamped, Pose
-from gazebo_msgs.srv import SpawnEntity
+from std_msgs.msg import String, ColorRGBA
+from geometry_msgs.msg import Twist, TwistStamped, Pose, Point
 from nav_msgs.msg import Odometry
+from visualization_msgs.msg import Marker, MarkerArray
 import math
 import time
 import random
+import subprocess
 
 
 class ShapeDrawer(Node):
@@ -30,6 +31,9 @@ class ShapeDrawer(Node):
         # Publisher for robot velocity (TwistStamped for Gazebo bridge)
         self.cmd_vel_pub = self.create_publisher(TwistStamped, '/cmd_vel', 10)
         
+        # Publisher for trail markers (visualization)
+        self.marker_pub = self.create_publisher(Marker, '/pet/trail_markers', 10)
+        
         # Subscriber for robot position
         self.odom_sub = self.create_subscription(
             Odometry,
@@ -38,8 +42,8 @@ class ShapeDrawer(Node):
             10
         )
         
-        # Service client for spawning entities in Gazebo
-        self.spawn_entity_client = self.create_client(SpawnEntity, '/spawn_entity')
+        # Check if Gazebo is available
+        self.gazebo_available = self.check_gazebo_available()
         
         # State variables
         self.is_drawing = False
@@ -58,7 +62,7 @@ class ShapeDrawer(Node):
         self.last_position = None
         self.current_position = None
         self.trail_counter = 0
-        self.trail_distance_threshold = 0.05  # Spawn trail marker every 5cm
+        self.trail_distance_threshold = 0.02  # Spawn trail marker every 2cm (more dense trail)
         
         # Color mapping for gestures
         self.gesture_colors = {
@@ -73,6 +77,25 @@ class ShapeDrawer(Node):
         
         self.get_logger().info('Shape Drawer Node Started!')
         self.get_logger().info('Ready to draw shapes with the virtual pet!')
+    
+    def check_gazebo_available(self):
+        """Check if Gazebo is running"""
+        try:
+            result = subprocess.run(
+                ['gz', 'service', '-l'],
+                capture_output=True,
+                text=True,
+                timeout=2.0
+            )
+            if '/world/default/create' in result.stdout:
+                self.get_logger().info('✅ Gazebo simulation detected!')
+                return True
+            else:
+                self.get_logger().warn('⚠️ Gazebo not detected - trails will not appear')
+                return False
+        except Exception as e:
+            self.get_logger().warn(f'⚠️ Could not detect Gazebo: {e}')
+            return False
 
     def odom_callback(self, msg):
         """Track robot position for trail drawing"""
@@ -145,86 +168,112 @@ class ShapeDrawer(Node):
             self.timer.cancel()
 
     def spawn_pace_text(self):
-        """Spawn PACE! text in Gazebo"""
+        """Spawn PACE! text in Gazebo using gz command"""
         self.peace_count += 1
         
-        # SDF model for text
+        if not self.gazebo_available:
+            self.get_logger().info('✌️ PACE! (Gazebo not available for visual)')
+            return
+        
+        # Simple visual marker for PACE
+        x_pos = float(self.peace_count * 0.5)
+        
+        # SDF model for a bright marker
         sdf_model = f"""<?xml version='1.0'?>
 <sdf version='1.6'>
-  <model name='pace_text_{self.peace_count}'>
+  <model name='pace_marker_{self.peace_count}'>
     <static>true</static>
+    <pose>{x_pos} 0 0.2 0 0 0</pose>
     <link name='link'>
       <visual name='visual'>
         <geometry>
           <box>
-            <size>0.5 0.1 0.001</size>
+            <size>0.3 0.3 0.4</size>
           </box>
         </geometry>
         <material>
-          <ambient>1 0.5 0 1</ambient>
-          <diffuse>1 0.5 0 1</diffuse>
+          <ambient>1 0 1 1</ambient>
+          <diffuse>1 0 1 1</diffuse>
+          <emissive>0.8 0 0.8 1</emissive>
         </material>
       </visual>
     </link>
   </model>
 </sdf>"""
         
-        request = SpawnEntity.Request()
-        request.name = f'pace_text_{self.peace_count}'
-        request.xml = sdf_model
-        request.robot_namespace = ''
-        request.initial_pose.position.x = float(self.peace_count * 0.5)
-        request.initial_pose.position.y = 0.0
-        request.initial_pose.position.z = 0.01
-        
-        # Call service asynchronously
-        if self.spawn_entity_client.wait_for_service(timeout_sec=1.0):
-            future = self.spawn_entity_client.call_async(request)
-            self.get_logger().info('✌️ Spawning PACE! text in Gazebo')
-        else:
-            self.get_logger().warn('Gazebo spawn service not available')
+        # Spawn using gz command
+        try:
+            subprocess.Popen(
+                ['gz', 'service', '-s', '/world/default/create',
+                 '--reqtype', 'gz.msgs.EntityFactory',
+                 '--reptype', 'gz.msgs.Boolean',
+                 '--timeout', '1000',
+                 '--req', f'sdf: "{sdf_model.replace(chr(10), " ")}"'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            self.get_logger().info('✌️ PACE! Spawned celebration marker!')
+        except Exception as e:
+            self.get_logger().warn(f'Could not spawn PACE marker: {e}')
 
     def spawn_trail_marker(self):
-        """Spawn a colorful trail marker at current position"""
+        """Spawn a colorful trail marker directly in Gazebo using gz command"""
         if self.current_position is None:
+            return
+        
+        if not self.gazebo_available:
             return
         
         self.trail_counter += 1
         r, g, b, a = self.current_color
         
-        # SDF model for a small colored sphere
+        x = float(self.current_position.x)
+        y = float(self.current_position.y)
+        
+        # Create SDF for a bright colored sphere
         sdf_model = f"""<?xml version='1.0'?>
 <sdf version='1.6'>
   <model name='trail_{self.trail_counter}'>
     <static>true</static>
+    <pose>{x} {y} 0.075 0 0 0</pose>
     <link name='link'>
       <visual name='visual'>
         <geometry>
           <sphere>
-            <radius>0.03</radius>
+            <radius>0.075</radius>
           </sphere>
         </geometry>
         <material>
-          <ambient>{r} {g} {b} {a}</ambient>
-          <diffuse>{r} {g} {b} {a}</diffuse>
-          <emissive>{r*0.3} {g*0.3} {b*0.3} 1</emissive>
+          <ambient>{r} {g} {b} 1</ambient>
+          <diffuse>{r} {g} {b} 1</diffuse>
+          <specular>1 1 1 1</specular>
+          <emissive>{r*0.8} {g*0.8} {b*0.8} 1</emissive>
         </material>
       </visual>
     </link>
   </model>
 </sdf>"""
         
-        request = SpawnEntity.Request()
-        request.name = f'trail_{self.trail_counter}'
-        request.xml = sdf_model
-        request.robot_namespace = ''
-        request.initial_pose.position.x = float(self.current_position.x)
-        request.initial_pose.position.y = float(self.current_position.y)
-        request.initial_pose.position.z = 0.01
-        
-        # Call service asynchronously
-        if self.spawn_entity_client.service_is_ready():
-            future = self.spawn_entity_client.call_async(request)
+        # Spawn using gz command (async, non-blocking)
+        try:
+            # Format SDF as single line
+            sdf_inline = sdf_model.replace('\n', ' ').replace('"', '\\"')
+            subprocess.Popen(
+                ['gz', 'service', '-s', '/world/default/create',
+                 '--reqtype', 'gz.msgs.EntityFactory',
+                 '--reptype', 'gz.msgs.Boolean',
+                 '--timeout', '100',
+                 '--req', f'sdf: "{sdf_inline}"'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            
+            if self.trail_counter % 10 == 0:
+                self.get_logger().info(f'🎨 {self.trail_counter} trail markers spawned')
+        except Exception as e:
+            if self.trail_counter == 1:
+                self.get_logger().warn(f'Trail spawning failed: {e}')
+
 
     def draw_square(self):
         """Draw a square"""

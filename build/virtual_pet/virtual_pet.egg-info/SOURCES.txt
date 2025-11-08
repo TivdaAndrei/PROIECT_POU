@@ -1,13 +1,17 @@
 package.xml
 setup.cfg
 setup.py
+launch/pet_complete.launch.py
 launch/pet_nodes_only.launch.py
 launch/pet_nodes_simple.launch.py
+launch/pet_with_gui.launch.py
 launch/virtual_pet.launch.py
 launch/virtual_pet_stable.launch.py
 resource/virtual_pet
+rviz/trail_view.rviz
 virtual_pet/__init__.py
 virtual_pet/gesture_recognizer.py
+virtual_pet/gui_controller.py
 virtual_pet/pet_controller.py
 virtual_pet/shape_drawer.py
 virtual_pet.egg-info/PKG-INFO
