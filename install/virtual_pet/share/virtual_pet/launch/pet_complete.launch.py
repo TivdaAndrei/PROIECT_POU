@@ -78,6 +78,16 @@ def generate_launch_description():
             parameters=[{'use_sim_time': use_sim_time}]
         ),
         
+        # Pet Trick Controller Node (for pet tricks like follow, sit, dance)
+        Node(
+            package='virtual_pet',
+            executable='pet_trick_controller',
+            name='pet_trick_controller',
+            output='screen',
+            emulate_tty=True,
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+        
         # RViz for trail visualization
         Node(
             package='rviz2',

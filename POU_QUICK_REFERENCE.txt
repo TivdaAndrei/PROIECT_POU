@@ -1,0 +1,140 @@
+╔═══════════════════════════════════════════════════════════════╗
+║              🎉 POU PET - QUICK REFERENCE CARD 🎉            ║
+╚═══════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────┐
+│  🗣️  VOICE COMMANDS                                         │
+└─────────────────────────────────────────────────────────────┘
+
+Wake Word:
+  "Hi friend" → Activates Pou for commands/chat
+
+Pet Tricks:
+  "Follow me"        → 👉 Follows your finger direction
+  "Stop following"   → 🛑 Stops following mode
+  "Sit"              → 🐕 Sits for 3 seconds
+  "Dance"            → 💃 Dances for 20 seconds
+  "Fetch"            → 🏃 Runs forward to fetch
+  "Play dead"        → 💀 Stays still for 5 seconds
+  "Spin around"      → 🌀 Spins 360 degrees
+  "Wiggle"           → 🎵 Wiggles left-right
+
+Shape Drawing:
+  "Draw a circle"    → ⭕ Draws circle
+  "Draw a square"    → ⬛ Draws square
+  "Draw a triangle"  → 🔺 Draws triangle
+  "Draw a star"      → ⭐ Draws star
+
+Chat:
+  Just talk naturally! Pou loves conversations 💬
+
+┌─────────────────────────────────────────────────────────────┐
+│  ✋ HAND GESTURES                                            │
+└─────────────────────────────────────────────────────────────┘
+
+  ✋ Open hand       → Circle
+  ✊ Fist            → Square
+  🤘 Rock sign       → Triangle
+  🖖 Three fingers   → Star
+  ☝️  One finger     → Line + pointing direction
+  ✌️  Peace sign     → Celebrate/Spin
+
+┌─────────────────────────────────────────────────────────────┐
+│  🚀 LAUNCH COMMANDS                                          │
+└─────────────────────────────────────────────────────────────┘
+
+Complete System (GUI + RViz + All features):
+  ./start_complete.sh
+
+Basic System (Gazebo only):
+  ./start_basic.sh
+
+Manual Launch:
+  cd ~/ROS2_ws
+  source install/setup.bash
+  ros2 launch virtual_pet pet_complete.launch.py
+
+┌─────────────────────────────────────────────────────────────┐
+│  🎪 TRICK DETAILS                                            │
+└─────────────────────────────────────────────────────────────┘
+
+Follow Mode:
+  • Point with one finger ☝️
+  • Pou will move in the direction you point
+  • Continuous - keeps following until stopped
+  • Say "stop following" to end
+
+Fetch:
+  • Fast forward run (5 seconds)
+  • Great for playing with ball
+
+Dance:
+  • Alternating forward movement + spinning
+  • ~20 second duration
+  • Can be interrupted with new command
+
+Play Dead:
+  • Complete stillness for 5 seconds
+  • Automatically "wakes up" after
+
+┌─────────────────────────────────────────────────────────────┐
+│  📡 ROS2 TOPICS (For Advanced Users)                         │
+└─────────────────────────────────────────────────────────────┘
+
+Publish Commands:
+  /pet/trick              → Send trick commands
+  /pet/gesture            → Send shape commands
+  /pet/pointing_direction → Send pointing vector
+
+Monitor Status:
+  /pet/status             → Trick status messages
+  /odom                   → Robot position
+  /cmd_vel                → Movement commands
+
+┌─────────────────────────────────────────────────────────────┐
+│  💡 TIPS                                                     │
+└─────────────────────────────────────────────────────────────┘
+
+• Good lighting helps with gesture/pointing detection
+• Say "Hi friend" before giving commands
+• Tricks can be interrupted with new commands
+• One finger gesture activates pointing detection
+• Conversation works anytime - Pou is your friend!
+• Check /pet/status topic for trick feedback
+
+┌─────────────────────────────────────────────────────────────┐
+│  🎨 CHARACTER INFO                                           │
+└─────────────────────────────────────────────────────────────┘
+
+Pou Appearance:
+  • Brown spherical body (like the game!)
+  • White eyes with black pupils
+  • Red smile 😊
+  • Moveable arms
+  • Smooth rolling movement
+
+┌─────────────────────────────────────────────────────────────┐
+│  🔧 TROUBLESHOOTING                                          │
+└─────────────────────────────────────────────────────────────┘
+
+Pou not responding to tricks?
+  → Check if pet_trick_controller node is running
+  → Echo /pet/trick topic to see if commands arrive
+
+Pointing not working?
+  → Ensure good lighting
+  → Hold one finger up clearly
+  → Check camera feed
+
+Voice not working?
+  → Say "Hi friend" first
+  → Check microphone permissions
+  → Look for "👂 Heard:" messages in terminal
+
+Build failed?
+  → cd ~/ROS2_ws
+  → colcon build --packages-select virtual_pet
+
+╔═══════════════════════════════════════════════════════════════╗
+║              Have fun playing with Pou! 🐾🎉                  ║
+╚═══════════════════════════════════════════════════════════════╝

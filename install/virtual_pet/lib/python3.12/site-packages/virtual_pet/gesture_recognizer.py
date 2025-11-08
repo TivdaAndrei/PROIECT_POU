@@ -7,6 +7,7 @@ Publishes recognized gestures to /pet/gesture topic
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
+from geometry_msgs.msg import Point
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -18,6 +19,9 @@ class GestureRecognizer(Node):
         
         # Publisher for recognized gestures
         self.gesture_pub = self.create_publisher(String, '/pet/gesture', 10)
+        
+        # Publisher for pointing direction (for follow trick)
+        self.pointing_pub = self.create_publisher(Point, '/pet/pointing_direction', 10)
         
         # MediaPipe setup
         self.mp_hands = mp.solutions.hands
@@ -122,6 +126,39 @@ class GestureRecognizer(Node):
         
         return "unknown"
 
+    def detect_pointing_direction(self, hand_landmarks, gesture):
+        """Detect where the finger is pointing (for follow mode)"""
+        # Only track direction when pointing with one finger
+        if gesture != "one_finger":
+            return
+        
+        # Get index finger tip and base coordinates
+        index_tip = hand_landmarks.landmark[self.mp_hands.HandLandmark.INDEX_FINGER_TIP]
+        index_mcp = hand_landmarks.landmark[self.mp_hands.HandLandmark.INDEX_FINGER_MCP]
+        wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
+        
+        # Calculate pointing direction vector
+        # From wrist/base to fingertip
+        dx = index_tip.x - wrist.x
+        dy = index_tip.y - wrist.y
+        
+        # Normalize the direction vector
+        length = np.sqrt(dx**2 + dy**2)
+        if length > 0:
+            dx /= length
+            dy /= length
+        
+        # Convert screen coordinates to robot coordinates
+        # X: right is positive, Y: forward is negative (camera is upside down relative to robot)
+        # Center the coordinates (0.5, 0.5) is center
+        direction = Point()
+        direction.x = (dx - 0.5) * 2.0  # Map to [-1, 1]
+        direction.y = -(dy - 0.5) * 2.0  # Map to [-1, 1], inverted
+        direction.z = 0.0
+        
+        # Publish pointing direction
+        self.pointing_pub.publish(direction)
+
     def process_frame(self):
         """Process camera frame and detect gestures"""
         ret, frame = self.cap.read()
@@ -150,6 +187,9 @@ class GestureRecognizer(Node):
                 
                 # Recognize gesture
                 gesture = self.recognize_gesture(hand_landmarks)
+                
+                # Detect pointing direction (for follow mode)
+                self.detect_pointing_direction(hand_landmarks, gesture)
                 
                 # Publish if gesture changed and cooldown expired
                 if gesture != "unknown" and gesture != self.last_gesture and self.gesture_cooldown == 0:

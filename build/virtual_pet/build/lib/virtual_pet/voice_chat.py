@@ -23,6 +23,9 @@ class VoiceChat(Node):
         # Publisher for gesture commands
         self.gesture_pub = self.create_publisher(String, '/pet/gesture', 10)
         
+        # Publisher for trick commands
+        self.trick_pub = self.create_publisher(String, '/pet/trick', 10)
+        
         # Publisher for chat messages (for GUI display)
         self.chat_pub = self.create_publisher(String, '/pet/chat', 10)
         
@@ -71,6 +74,23 @@ class VoiceChat(Node):
             'peace': 'peace',
             'celebrate': 'peace',
             'spin': 'peace'
+        }
+        
+        # Trick keywords mapping (for pet tricks)
+        self.trick_keywords = {
+            'follow': 'follow',
+            'follow me': 'follow',
+            'stop follow': 'stop_follow',
+            'stop following': 'stop_follow',
+            'sit': 'sit',
+            'sit down': 'sit',
+            'dance': 'dance',
+            'wiggle': 'wiggle',
+            'fetch': 'fetch',
+            'get it': 'fetch',
+            'play dead': 'play_dead',
+            'spin around': 'spin',
+            'turn around': 'spin',
         }
         
         # LLM configuration (Ollama - local LLM)
@@ -205,18 +225,27 @@ Keep responses SHORT (1-2 sentences max) and very friendly. Use emojis occasiona
                 self.speak("Yes, I am listening. How may I assist you?")
                 return
             
-            # Check for trick commands (keywords that trigger shape drawing)
-            command_found = False
-            for keyword, gesture in self.command_keywords.items():
+            # Check for trick commands first (pet tricks like sit, follow, dance)
+            trick_found = False
+            for keyword, trick in self.trick_keywords.items():
                 if keyword in text_lower:
-                    self.execute_command(keyword, gesture)
-                    command_found = True
+                    self.execute_trick(keyword, trick)
+                    trick_found = True
                     break
+            
+            # Check for shape commands (keywords that trigger shape drawing)
+            shape_found = False
+            if not trick_found:
+                for keyword, gesture in self.command_keywords.items():
+                    if keyword in text_lower:
+                        self.execute_shape_command(keyword, gesture)
+                        shape_found = True
+                        break
             
             # If NO command was found, have a conversation!
             # Don't skip conversation just because command executed
             # Let Pou respond naturally to everything
-            if not command_found:
+            if not trick_found and not shape_found:
                 # Generate conversational response for everything
                 response = self.generate_response(text)
                 self.speak(response)
@@ -226,8 +255,37 @@ Keep responses SHORT (1-2 sentences max) and very friendly. Use emojis occasiona
         except sr.RequestError as e:
             self.get_logger().error(f'Speech recognition error: {e}')
     
-    def execute_command(self, keyword, gesture):
-        """Execute a trick command"""
+    def execute_trick(self, keyword, trick):
+        """Execute a pet trick command"""
+        responses = {
+            'follow': "Okay! I'll follow your finger! Point where to go! 👉",
+            'follow me': "Following you! Point the way! 🐾",
+            'stop_follow': "Stopping! I'm right here! 🛑",
+            'stop_following': "Okay, I'll stop following! 🛑",
+            'sit': "Sitting down! Good boy! 🐕",
+            'sit down': "Okay, sitting! 🐕",
+            'dance': "Watch me dance! 💃🕺",
+            'wiggle': "Wiggle wiggle! 🎵",
+            'fetch': "I'll fetch it! Running! 🏃",
+            'get it': "Getting it! 🏃",
+            'play_dead': "Playing dead... 💀",
+            'spin': "Spinning around! 🌀",
+            'turn around': "Turning around! 🔄",
+        }
+        
+        # Publish trick command
+        msg = String()
+        msg.data = trick
+        self.trick_pub.publish(msg)
+        
+        # Respond
+        response = responses.get(keyword, f"Doing the {keyword} trick!")
+        self.speak(response)
+        
+        self.get_logger().info(f'🎪 Executing trick: {keyword} -> {trick}')
+    
+    def execute_shape_command(self, keyword, gesture):
+        """Execute a shape drawing command"""
         responses = {
             'circle': "Okay! Watch me draw a circle! 🔵",
             'square': "Let me draw a square for you! ⬛",

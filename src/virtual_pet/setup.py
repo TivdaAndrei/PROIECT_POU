@@ -14,6 +14,8 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
+        (os.path.join('share', package_name, 'models', 'pou'), glob('models/pou/*')),
+        (os.path.join('share', package_name, 'models', 'ball'), glob('models/ball/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -29,6 +31,7 @@ setup(
             'pet_controller = virtual_pet.pet_controller:main',
             'gui_controller = virtual_pet.gui_controller:main',
             'voice_chat = virtual_pet.voice_chat:main',
+            'pet_trick_controller = virtual_pet.pet_trick_controller:main',
         ],
     },
 )

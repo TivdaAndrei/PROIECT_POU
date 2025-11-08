@@ -10,11 +10,16 @@ setup.py
 ../../build/virtual_pet/virtual_pet.egg-info/top_level.txt
 ../../build/virtual_pet/virtual_pet.egg-info/zip-safe
 launch/pet_complete.launch.py
+models/ball/model.config
+models/ball/model.sdf
+models/pou/model.config
+models/pou/model.sdf
 resource/virtual_pet
 rviz/trail_view.rviz
 virtual_pet/__init__.py
 virtual_pet/gesture_recognizer.py
 virtual_pet/gui_controller.py
 virtual_pet/pet_controller.py
+virtual_pet/pet_trick_controller.py
 virtual_pet/shape_drawer.py
 virtual_pet/voice_chat.py
